@@ -1,0 +1,8 @@
+{
+  "name": "auth-jwt",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "https://github.com/mxdsxn/auth-jwt.git",
+  "author": "Madson Santana <madson.santana96@gmail.com>",
+  "license": "MIT"
+}
