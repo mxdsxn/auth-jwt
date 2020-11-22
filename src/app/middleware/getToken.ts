@@ -3,10 +3,9 @@ import {
  Response,
  NextFunction
 } from 'express'
-
 import jwt from 'jsonwebtoken'
 
-const authConfig = require('../../config/auth')
+import authConfig from '../../config/auth'
 
 export default (req: Request, res: Response, next: NextFunction) => {
  const authHeader = req.headers.authorization
@@ -32,7 +31,7 @@ export default (req: Request, res: Response, next: NextFunction) => {
 
  jwt.verify(token, authConfig.secret, (err: any, decoded: any) => {
   if (err) {
-   return res.status(401).json({ error: 'Token invalido' })
+   return res.status(401).json({ error: 'Token invalido', err })
   }
 
   if (decoded) {

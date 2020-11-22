@@ -1,10 +1,11 @@
 import express from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import crypto from 'crypto'
 
 import User from '../models/user'
 
-const authConfig = require('../../config/auth')
+import authConfig from '../../config/auth'
 
 const setToken = (id: string) => {
  return jwt.sign({ id }, authConfig.secret, {
@@ -52,6 +53,68 @@ router.post('/auth', async (req, res) => {
   mensage: 'Usuario autemticado',
   token
  })
+})
+
+router.post('/forgot_password', async (req, res) => {
+ const { email } = req.body
+
+ try {
+  const user = await User.findOne({ email })
+
+  if (!user) {
+   return res.status(400).json({ error: 'Usuario nao encontrado' })
+  }
+
+  const token = crypto.randomBytes(20).toString('hex')
+
+  const now = new Date()
+  now.setHours(now.getHours() + 1)
+
+  await User.findByIdAndUpdate(user.get('id'), user.set({
+   passwordResetExpires: now.getTime(),
+   passwordResetToken: token,
+  }))
+
+  return res.status(200).json({ mensage: 'Token para reset de senha', token })
+
+ } catch (error) {
+  return res.status(400).json({ error: 'Erro em forgot_password' })
+ }
+})
+
+router.post('/reset_password', async (req, res) => {
+ const { email, resetToken, newPassword } = req.body
+
+ try {
+  const user = await User.findOne({ email }).select('+passwordResetExpires passwordResetToken')
+
+  if (!user) {
+   return res.status(400).json({ error: 'Usuario nao encontrado' })
+  }
+
+  const userResetToken = user.get('passwordResetToken')
+
+  if (!(userResetToken === resetToken)) {
+   return res.status(400).json({ error: 'ResetToken invalido' })
+  }
+
+  const userResetExpires = user.get('passwordResetExpires') as number
+
+  const now = new Date().getTime()
+
+  if (now > userResetExpires) {
+   return res.status(400).json({ error: 'ResetToken expirado' })
+  }
+
+  user.set({ password: newPassword })
+
+  await user.save()
+
+  return res.status(200).json({ mensage: 'Senha trocada' })
+
+ } catch (error) {
+  return res.status(400).json({ error: 'Erro em forgot_password' })
+ }
 })
 
 export default router
