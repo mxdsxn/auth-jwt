@@ -36,8 +36,8 @@ export default (req: Request, res: Response, next: NextFunction) => {
   }
 
   if (decoded) {
-   req.userId = decoded.id
-   console.log(req)
+   req.body.userId = decoded.id
+
    return next()
   }
  })
