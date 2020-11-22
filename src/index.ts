@@ -1,18 +1,14 @@
 import express from 'express'
-import authController from './controllers/auth'
-import projectController from './controllers/project'
+import routeControllers from './app/controllers/'
 
 const app = express()
 
 app.use(express.json())
 
-app.use(
- authController,
- projectController
-)
-
-app.get('/about', (req, res) => {
+app.get('/about', (a, b, n) => n(), (req, res) => {
  return res.json({ mensage: 'server online' })
 })
+
+app.use(routeControllers)
 
 app.listen(2000, () => console.log('Server online'))

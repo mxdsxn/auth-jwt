@@ -1,4 +1,4 @@
-import { default as mongoConn } from '../database/'
+import { default as mongoConn } from '../../database/'
 import bcrypt from 'bcryptjs'
 
 const UserSchema = new mongoConn.Schema({

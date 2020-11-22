@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 
 import User from '../models/user'
 
-const authConfig = require('../config/auth')
+const authConfig = require('../../config/auth')
 
 const setToken = (id: string) => {
  return jwt.sign({ id }, authConfig.secret, {
