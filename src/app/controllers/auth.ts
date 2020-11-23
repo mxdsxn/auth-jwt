@@ -6,6 +6,7 @@ import crypto from 'crypto'
 import User from '../models/user'
 
 import authConfig from '../../config/auth'
+import getToken from '../middleware/getToken'
 
 const setToken = (id: string) => {
  return jwt.sign({ id }, authConfig.secret, {
@@ -32,7 +33,7 @@ router.post('/register', async (req, res) => {
  }
 })
 
-router.post('/auth', async (req, res) => {
+router.post('/login', async (req, res) => {
  const { email, password } = req.body
 
  const user = await User.findOne({ email }).select('+password')
@@ -117,4 +118,7 @@ router.post('/reset_password', async (req, res) => {
  }
 })
 
+router.get('/check_login', getToken, async (req, res) => {
+ res.json({ ok: 'Usuario logado' })
+})
 export default router

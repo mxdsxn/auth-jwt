@@ -1,29 +1,29 @@
 import {
- Request,
  Response,
- NextFunction
+ NextFunction,
+ Request
 } from 'express'
 import jwt from 'jsonwebtoken'
 
 import authConfig from '../../config/auth'
 
 export default (req: Request, res: Response, next: NextFunction) => {
- const authHeader = req.headers.authorization
+ const { authorization } = req.headers
 
- if (!authHeader) {
+ if (!authorization) {
   return res.status(401).json({ error: 'Token nao encontrado' })
  }
 
- const parts = authHeader.split(' ')
+ const authParts = authorization.split(' ')
 
- if (!(parts.length === 2)) {
+ if (!(authParts.length === 2)) {
   return res.status(401).json({ error: 'Token fora do padrao' })
  }
 
  const [
   scheme,
   token,
- ] = parts
+ ] = authParts
 
  if ('Bearer' !== scheme) {
   return res.status(401).json({ error: 'Token sem Bearer' })
